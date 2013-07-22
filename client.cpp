@@ -76,8 +76,8 @@ int main(int argc, char *argv[])
     printf("Please enter the message: ");
     bzero(buffer,256);
 	//put the message into the buffer*/
-    printf("Enter the From: Email Address");  //enter FROM Email Address
-    bzero(buffer, 256);    
+  //  printf("Enter the From: Email Address");  //enter FROM Email Address
+   // bzero(buffer, 256);    
 
     fgets(buffer,255,stdin);
 	
@@ -89,17 +89,17 @@ int main(int argc, char *argv[])
 	//clear the buffer
     bzero(buffer,256);
 
-    printf("Enter the To: Email address"); //enters TO Email Address
-    bzero(buffer,256);
+   // printf("Enter the To: Email address"); //enters TO Email Address
+   // bzero(buffer,256);
 
-    fgets(buffer,255,stdin); //enters To email address in buffer
+    //fgets(buffer,255,stdin); //enters To email address in buffer
     n = write(sockfd,buffer,strlen(buffer));
     if (n < 0) 
          error("ERROR writing to socket");
 
-    bzero(buffer,256);
+  //  bzero(buffer,256);
 
-    printf("Enter the message");
+  //  printf("Enter the message");
     bzero(buffer,256);
 
     fgets(buffer,255,stdin);
