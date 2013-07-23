@@ -111,16 +111,17 @@ int main(int argc, char *argv[]){
         error("ERROR on binding");
 
     //
+    // Listen on the socket for a maximum number of connections; in this example
+    //    max connections is 5 but the number is arbitrary and meaningless because
+    //    this is a single threaded application
+    //
+    listen(sockfd,5);
+
+    //
     // loop forever ... it's a server
     //
     while(1){
 
-        //
-        // Listen on the socket for a maximum number of connections; in this example
-        //    max connections is 5 but the number is arbitrary and meaningless because
-        //    this is a single threaded application
-        //
-        listen(sockfd,5);
 
         //
         // get the size of the cii_addr struct 
@@ -160,7 +161,8 @@ int main(int argc, char *argv[]){
         //  QUIT
         //
 
-        if (n < 0) error("ERROR reading from socket");
+        //if (n < 0) error("ERROR reading from socket");
+        if (n < 0) printf("ERROR reading from socket");
         printf("Here is the message: %s\n",buffer);
  
         //
@@ -175,7 +177,8 @@ int main(int argc, char *argv[]){
         // consider changing write() to send()
         //
         n = write(newsockfd,"I got your message",18);
-        if (n < 0) error("ERROR writing to socket");
+        //if (n < 0) error("ERROR writing to socket");
+        if (n < 0) printf("ERROR writing to socket");
 
     }
     //

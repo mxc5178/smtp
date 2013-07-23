@@ -10,19 +10,21 @@ smtp project for client server class
 
 2. Run examples:
 
-    ./example-client <addr>
-    ./example-server <port>
+    ./example-client <connect_port>
+    ./example-server <url> <listen_port>
 
 3. Build client/server:
 
-    make client
-    make server
+    make smtp-client
+    make smtp-server
 
 4. Run client/server:
 
     ./smtp-client <server-addr>
-    ./smtp-server <port>
+    ./smtp-server <url> <port>
 
 3. Clean the build:
 
-    make clean
+    make clean-server
+    make clean-client
+    make clean-example

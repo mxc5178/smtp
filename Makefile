@@ -13,6 +13,12 @@ smtp-server :
 clean-server :
 	rm -f smtp-server
 
+smtp-client :
+	$(CC) -o smtp-client client.cpp
+
+clean-client :
+	rm -f smtp-client
+
 example-server :
 	$(CC) -o example-server example-server.cpp
 
