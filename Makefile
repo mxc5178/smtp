@@ -8,13 +8,13 @@ CC = g++ -g -Wno-deprecated
 CFLAGS = ''
 
 smtp-server :
-	$(CC) -o smtp-server server.cpp
+	$(CC) -o smtp-server server.cpp util.cpp
 
 clean-server :
 	rm -f smtp-server
 
 smtp-client :
-	$(CC) -o smtp-client client.cpp
+	$(CC) -o smtp-client client.cpp util.cpp
 
 clean-client :
 	rm -f smtp-client

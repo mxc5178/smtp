@@ -9,6 +9,12 @@
 #include <sys/types.h> 
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <vector>
+#include <sstream>
+
+#include "util.h"
+
+using namespace std;
 
 //
 // function to print an error message and exit the program
@@ -30,6 +36,19 @@ int main(int argc, char *argv[]){
         fprintf(stderr,"ERROR, no port provided\n");
         exit(1);
     }
+
+    //
+    // v = a vector for breaking down the buffer traded between client and server
+    // d = delimiter to break the string upon
+    // i = integer returned by split ... 1 if success, 0 if fail
+    // ss = string stream for streaming buffer into
+    // s = string for streaming ss into for splitting
+    //
+    vector<string> v;
+    string d = " ";
+    int i;
+    stringstream ss;
+    string s;
 
     //
     // sockfd and newsockfd -> sockets
@@ -153,13 +172,35 @@ int main(int argc, char *argv[]){
         n = read(newsockfd,buffer,255);
 
         //
-        // check for specific messages here:
-        //  HELO
-        //  MAIL FROM:
-        //  RCPT TO:
-        //  DATA
-        //  QUIT
+        //  stream the buffer to a string and split it
         //
+        ss << buffer;
+        ss >> s;
+        i = util::split(v, s, d);
+
+        if (i>0){
+            //
+            // check for specific messages here:
+            //  HELO
+            //  MAIL FROM:
+            //  RCPT TO:
+            //  DATA
+            //  QUIT
+            //
+            if(v[0] == "HALO"){
+                printf("%s", "HALO");
+            }else if(v[0] ==  "MAIL" && v[1] == "FROM:"){
+                printf("%s", "MAIL FROM:");
+            }else if(v[0] ==  "RCPT"){
+                printf("%s", "RCPT TO:");
+            }else if(v[0] == "DATA"){
+                printf("%s", "DATA");
+            }else if(v[0] == "QUIT"){
+                printf("%s", "QUIT");
+            }else{
+                printf("%s", "ERROR");
+            }
+        }
 
         //if (n < 0) error("ERROR reading from socket");
         if (n < 0) printf("ERROR reading from socket");
@@ -173,6 +214,12 @@ int main(int argc, char *argv[]){
         //  354 - Send your message
         //  501 - Syntax error
         //  55x - Failure
+
+        //
+        //  erase the vector
+        //
+        v.clear();
+
         //
         // consider changing write() to send()
         //
