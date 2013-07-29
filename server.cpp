@@ -187,8 +187,8 @@ int main(int argc, char *argv[]){
             //  DATA
             //  QUIT
             //
-            if(v[0] == "HALO"){
-                printf("%s", "HALO");
+            if(v[0] == "HELO"){
+                printf("%s", "HELO");
             }else if(v[0] ==  "MAIL" && v[1] == "FROM:"){
                 printf("%s", "MAIL FROM:");
             }else if(v[0] ==  "RCPT"){
