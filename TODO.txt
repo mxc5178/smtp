@@ -1,3 +1,18 @@
 ##
 ## This is our list
 ##
+
+
+server:
+
+    - determine that client is on local network (127.0.0.1)
+    - format coded responses
+    - write each message to a file
+
+
+client:
+
+    - catch responses and parse success and error codes
+    - react accordingly
+
+
