@@ -181,14 +181,14 @@ int main(int argc, char *argv[]){
         if (i>0){
             //
             // check for specific messages here:
-            //  HELO
+            //  HALO
             //  MAIL FROM:
             //  RCPT TO:
             //  DATA
             //  QUIT
             //
-            if(v[0] == "HELO"){
-                printf("%s", "HELO");
+            if(v[0] == "HALO"){
+                printf("%s", "HALO");
             }else if(v[0] ==  "MAIL" && v[1] == "FROM:"){
                 printf("%s", "MAIL FROM:");
             }else if(v[0] ==  "RCPT"){

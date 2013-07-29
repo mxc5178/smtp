@@ -136,7 +136,7 @@ continuously communicate with the server
         //
 	std::string str;
 	str = buffer;
-	//cout << str;
+	cout << str;
 
 	if( str.find("500"))
 		error("command error syntax");
