@@ -139,8 +139,29 @@ continuously communicate with the server
 	//cout << str;
 
 	if( str.find("500"))
-		error("command error syntax");
-
+		error("Syntax error, command unrecognised");
+	else if(str.find("501"))
+		error("Syntax error in parameters or arguments");
+	else if(str.find("502"))
+		error("Command not implemented");
+	else if(str.find("550"))
+		error("Requested action not taken: mailbox unavailable");
+	else if(str.find("551"))
+		error("User not local; please try <forward-path>");
+	else if(str.find("552"))
+		error("Requested mail action aborted: exceeded storage allocation");
+	else if(str.find("553"))
+		error("Requested action not taken: mailbox name not allowed");
+	else if(str.find("554"))
+		error("Transaction failed");
+	else if(str.find("220"))
+		error("<domain> Service ready");
+	else if(str.find("221"))
+		error("<domain> Service closing transmission channel");
+	else if(str.find("250"))
+		error("Requested mail action okay, completed");
+	else if(str.find("354"))
+		error("Start main input; end with <CRLF>.<CRLF>");
          else if (n < 0)
              error("ERROR reading from socket");
         
