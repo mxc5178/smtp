@@ -1,10 +1,11 @@
 //
 // simple SMTP server
 //
-
+#include <cstdlib>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 #include <unistd.h>
 #include <sys/types.h> 
 #include <sys/socket.h>
@@ -44,11 +45,13 @@ int main(int argc, char *argv[]){
     // ss = string stream for streaming buffer into
     // s = string for streaming ss into for splitting
     //
-    vector<string> v;
+    //vector<string> v;
     string d = " ";
     int i;
     stringstream ss;
-    string s;
+    std::string s = "";
+
+    string message;
 
     //
     // sockfd and newsockfd -> sockets
@@ -137,6 +140,16 @@ int main(int argc, char *argv[]){
     listen(sockfd,5);
 
     //
+    // some boolean variables to keep track of where we
+    // are in the conversation
+    //
+    bool hello = false;
+    bool mailfrom = false;
+    bool mailto = false;
+    bool data = false;
+    bool quit = false;
+
+    //
     // loop forever ... it's a server
     //
     while(1){
@@ -175,37 +188,112 @@ int main(int argc, char *argv[]){
         //  stream the buffer to a string and split it
         //
         ss << buffer;
-        ss >> s;
-        i = util::split(v, s, d);
+        s = ss.str();
+        ss.str("");
 
-        if (i>0){
+
+        //
+        // check for specific messages here:
+        //  HELO
+        //  MAIL FROM:
+        //  RCPT TO:
+        //  DATA
+        //  QUIT
+        //
+        if(s.find("HELO") != std::string::npos && s.find("HELO") == 0){
+
+            printf("%s", "HELO\n");
+
             //
-            // check for specific messages here:
-            //  HELO
-            //  MAIL FROM:
-            //  RCPT TO:
-            //  DATA
-            //  QUIT
+            //  220 - Hello request
             //
-            if(v[0] == "HELO"){
-                printf("%s", "HELO");
-            }else if(v[0] ==  "MAIL" && v[1] == "FROM:"){
-                printf("%s", "MAIL FROM:");
-            }else if(v[0] ==  "RCPT"){
-                printf("%s", "RCPT TO:");
-            }else if(v[0] == "DATA"){
-                printf("%s", "DATA");
-            }else if(v[0] == "QUIT"){
-                printf("%s", "QUIT");
+
+            hello = true;
+            message = "220 Hello,  Service Ready";
+
+        }else if(s.find("MAIL FROM:") != std::string::npos && s.find("MAIL FROM:") == 0){
+
+            //
+            // check that hello has been recieved
+            //
+
+            if (hello){
+                message = "250 Ok";
             }else{
-                printf("%s", "ERROR");
+                message = "503 Bad sequence of commands";
             }
+            printf("%s", "MAIL FROM:\n");
+
+        }else if(s.find("RCPT TO:") != std::string::npos && s.find("RCPT TO:") == 0){
+
+            if (hello){
+
+                message = "250 Ok";
+
+            }else{
+                message = "503 Bad sequence of commands";
+            }
+
+            printf("%s", "RCPT TO:\n");
+
+        }else if((s.find("DATA") != std::string::npos && s.find("DATA") == 0) || data){
+
+            //
+            // recieving part of the data segment
+            //
+
+            if(!hello){
+
+                message = "503 Bad sequence of commands";
+
+            }else if (data){
+
+                //
+                // this is part of the data to be written to a file
+                //
+
+                util::writeData(string("test-mail-file"), s);
+
+                if(s[0] == '.'){
+                    //
+                    // end of data stream
+                    //
+
+                    printf("%s", "making data false\n");
+                    data = false;
+
+                }
+                
+                message = "250 OK";
+
+            }else{
+
+                printf("%s", "making data true\n");
+                data = true;
+                message = "354 End data with <CR><LF>.<CR><LF>";
+
+
+            }
+
+            printf("%s", "DATA\n");
+
+        }else if(s.find("QUIT") != std::string::npos && s.find("QUIT") == 0){
+
+            printf("%s", "QUIT\n");
+            message = "221 Service closing transmission channel";
+            quit = true;
+        }else{
+
+            printf("%s", "ERROR\n");
+            message = "503 Bad sequence of commands";
+
         }
 
         //if (n < 0) error("ERROR reading from socket");
         if (n < 0) printf("ERROR reading from socket");
-        printf("Here is the message: %s\n",buffer);
- 
+        printf("buffer: %s\n",buffer);
+
+        bzero(buffer,256);
         //
         // send response to the client:
         //  220 - Hello request
@@ -216,16 +304,18 @@ int main(int argc, char *argv[]){
         //  55x - Failure
 
         //
-        //  erase the vector
-        //
-        v.clear();
-
-        //
         // consider changing write() to send()
         //
-        n = write(newsockfd,"I got your message",18);
+        //n = write(newsockfd,"I got your message",18);
+        n = write(newsockfd, message.c_str(), message.size());
+
         //if (n < 0) error("ERROR writing to socket");
         if (n < 0) printf("ERROR writing to socket");
+
+        if(quit){
+            close(newsockfd);
+            close(sockfd);
+        }
 
     }
     //

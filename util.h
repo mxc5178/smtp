@@ -16,10 +16,8 @@
 class util{
 
     public:
-        //
-        // split string on delimiter
-        //
-        static int split(std::vector<std::string> & v, std::string &s, std::string &d);
+
+        static void writeData(std::string f, std::string data);
 
         //
         // constructor ... not necessary because methods are all static and
